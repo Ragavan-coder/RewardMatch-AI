@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #070707;
+    --bg-secondary: #120808;
+    --primary-red: #FF3038;
+    --deep-red: #A30016;
+    --text-white: #F5F5F5;
+    --text-muted: #A6A6A6;
+    --accent-gold: #E5B567;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    width: 100%;
+    min-height: 100%;
+    background-color: #070707;
+    color: #F5F5F5;
+    font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* Custom Red Glow Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a1114;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 48, 56, 0.2);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #FF3038;
+  }
+}
+
+/* 3D Perspective & Transform Presets */
+.perspective-container {
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Custom Neon & Volumetric Shadows */
+.glow-red-sm {
+  box-shadow: 0 0 15px rgba(255, 48, 56, 0.35);
+}
+
+.glow-red-md {
+  box-shadow: 0 0 25px rgba(255, 48, 56, 0.45), 0 0 50px rgba(163, 0, 22, 0.25);
+}
+
+.glow-red-lg {
+  box-shadow: 0 0 40px rgba(255, 48, 56, 0.6), 0 0 80px rgba(163, 0, 22, 0.4), inset 0 0 20px rgba(255, 48, 56, 0.2);
+}
+
+.text-glow-red {
+  text-shadow: 0 0 12px rgba(255, 48, 56, 0.7), 0 0 24px rgba(255, 48, 56, 0.4);
+}
+
+.text-glow-gold {
+  text-shadow: 0 0 12px rgba(229, 181, 103, 0.7), 0 0 24px rgba(229, 181, 103, 0.3);
+}
+
+.card-reflection {
+  -webkit-box-reflect: below 8px linear-gradient(to bottom, rgba(0,0,0,0) 65%, rgba(255, 48, 56, 0.15) 100%);
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(18, 8, 8, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 48, 56, 0.18);
+}
+
+.glass-panel-subtle {
+  background: rgba(20, 20, 24, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card-border {
+  border: 1px solid rgba(255, 48, 56, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Keyframe Animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 48, 56, 0.5), 0 0 40px rgba(255, 48, 56, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(255, 48, 56, 0.8), 0 0 60px rgba(255, 48, 56, 0.4);
+    transform: scale(1.02);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes orbitSpin {
+  from {
+    transform: rotateX(65deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(65deg) rotateZ(360deg);
+  }
+}
+
+.animate-orbit-spin {
+  animation: orbitSpin 20s linear infinite;
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px) rotateZ(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotateZ(1deg);
+  }
+}
+
+.animate-float {
+  animation: floatGentle 4s ease-in-out infinite;
+}
+
+/* Hologram / Volumetric Light Beam */
+.volumetric-beam {
+  background: radial-gradient(ellipse at 50% 100%, rgba(255, 48, 56, 0.4) 0%, rgba(163, 0, 22, 0.15) 45%, rgba(0, 0, 0, 0) 75%);
+}
+
+.light-sweep {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+}
+
+/* Scratch Card Canvas Styles */
+.scratch-canvas {
+  touch-action: none;
+  user-select: none;
+  cursor: crosshair;
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

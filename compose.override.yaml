@@ -1,0 +1,13 @@
+services:
+  backend:
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./django_backend:/app/django_backend
+    environment:
+      - DJANGO_DEBUG=True
+    command: python django_backend/manage.py runserver 0.0.0.0:8000
+
+  frontend:
+    ports:
+      - "127.0.0.1:5173:8080"
