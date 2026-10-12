@@ -1,6 +1,7 @@
 import re
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 from apps.knowledge.models import SourceDocument, ensure_default_source_documents
 from apps.security_audit.models import SecurityAuditEvent
@@ -13,6 +14,7 @@ class RAGQueryView(APIView):
     Returns official policy answers with verifiable source document citations.
     Supports a verified rules-only mode if no external LLM is configured.
     """
+    permission_classes = [AllowAny]
     def post(self, request):
         query = request.data.get("query", "")
         target_date = request.data.get("target_date")

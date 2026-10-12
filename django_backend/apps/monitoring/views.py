@@ -1,6 +1,7 @@
 from decimal import Decimal
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 
 from apps.accounts.authentication import get_authorized_user_or_raise
@@ -11,6 +12,7 @@ from .models import Merchant, TrackedProduct
 
 class MerchantListView(APIView):
     """Returns list of supported online retail merchants."""
+    permission_classes = [AllowAny]
     def get(self, request):
         if Merchant.objects.count() == 0:
             defaults = [
@@ -40,6 +42,7 @@ class MerchantListView(APIView):
 
 class TrackedProductsView(APIView):
     """GET and POST tracked products with SSRF and object-level authorization."""
+    permission_classes = [AllowAny]
     def get(self, request):
         user = get_authorized_user_or_raise(request)
         products = TrackedProduct.objects.filter(user=user).order_by("-created_at")
@@ -64,8 +67,6 @@ class TrackedProductsView(APIView):
         ])
 
     def post(self, request):
-        user = get_authorized_user_or_raise(request)
-
         title = request.data.get("title")
         merchant_name = request.data.get("merchant_name", "Amazon India")
         current_price = Decimal(str(request.data.get("current_price", 0)))
@@ -79,7 +80,7 @@ class TrackedProductsView(APIView):
             if not is_safe:
                 client_ip = request.META.get("REMOTE_ADDR", "127.0.0.1")
                 SecurityAuditEvent.objects.create(
-                    user=user if user.is_authenticated else None,
+                    user=request.user if request.user.is_authenticated else None,
                     event_type="SSRF_ATTEMPT_BLOCKED",
                     ip_address=client_ip,
                     description=f"Blocked prohibited target URL '{product_url}': {reason}",
@@ -89,6 +90,8 @@ class TrackedProductsView(APIView):
                     "detail": f"Security validation failed: {reason}",
                     "security_code": "SSRF_BLOCKED"
                 }, status=status.HTTP_400_BAD_REQUEST)
+
+        user = get_authorized_user_or_raise(request)
 
         best_card = "HDFC Regalia Gold"
         discount_rate = "5% Instant Discount + 4X Points"

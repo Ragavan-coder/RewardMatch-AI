@@ -16,7 +16,6 @@ import {
 
 export const NotificationCenter: React.FC = () => {
   const [alerts, setAlerts] = useState<NotificationItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'alerts' | 'settings'>('alerts');
 
   // Preferences state
@@ -27,12 +26,11 @@ export const NotificationCenter: React.FC = () => {
   const [settingsSaved, setSettingsSaved] = useState<boolean>(false);
 
   const loadAlerts = async () => {
-    setIsLoading(true);
     try {
       const data = await fetchNotifications();
       setAlerts(data);
-    } finally {
-      setIsLoading(false);
+    } catch (err) {
+      console.warn('Failed to load notifications', err);
     }
   };
 

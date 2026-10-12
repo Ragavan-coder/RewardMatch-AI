@@ -51,7 +51,6 @@ export const WeeklyReportViewer: React.FC = () => {
   const secB = sections.B_spending_analysis || {};
   const secC = sections.C_rewards_performance || {};
   const secD = sections.D_shopping_activity || {};
-  const secE = sections.E_best_opportunities || {};
   const secF = sections.F_security_activity || {};
   const secG = sections.G_recommendations || {};
 

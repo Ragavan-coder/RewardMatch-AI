@@ -23,7 +23,7 @@ import {
   Database,
 } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
-import { loginUser, registerUser } from '../services/api';
+import { loginUser } from '../services/api';
 import { AccountSetupWizard } from './AccountSetupWizard';
 
 interface LoginPageProps {

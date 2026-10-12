@@ -1,10 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from .models import SourceDocument, ensure_default_source_documents
 
 
 class SourceDocumentsListView(APIView):
     """GET list of verified financial policy documents."""
+    permission_classes = [AllowAny]
     def get(self, request):
         ensure_default_source_documents()
         docs = SourceDocument.objects.all()

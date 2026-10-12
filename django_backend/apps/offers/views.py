@@ -2,12 +2,14 @@ from datetime import date
 from decimal import Decimal
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 from .models import RewardOffer
 
 
 class OfferListView(APIView):
     """GET active bank and merchant offers."""
+    permission_classes = [AllowAny]
     def get(self, request):
         merchant = request.query_params.get("merchant")
         issuer = request.query_params.get("issuer")
@@ -92,6 +94,7 @@ class OfferListView(APIView):
 
 class UpiOffersView(APIView):
     """GET UPI and RuPay on UPI specific promotions."""
+    permission_classes = [AllowAny]
     def get(self, request):
         upi_offers = [
             {

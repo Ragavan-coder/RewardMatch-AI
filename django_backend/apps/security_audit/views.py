@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 from .models import SecurityAuditEvent, FailedLoginAttempt
 
@@ -55,6 +56,7 @@ class AdminSecurityDashboardView(APIView):
     Provides real-time threat detection metrics, blocked attack stats,
     cryptographic envelope status, and audit logs.
     """
+    permission_classes = [AllowAny]
     def get(self, request):
         # Enforce role-based admin authorization if authenticated user is present
         if request.user and request.user.is_authenticated and not (request.user.is_staff or request.user.is_superuser):

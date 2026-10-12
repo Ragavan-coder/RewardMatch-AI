@@ -62,16 +62,16 @@ export const SavingsAnalytics: React.FC = () => {
   };
 
   const buckets = data?.buckets || {
-    confirmed_instant_discount: 2450,
-    confirmed_cashback: 1875,
-    confirmed_redeemed_reward: 1200,
-    pending_reward: 650,
-    estimated_reward: 1450,
-    potential_savings: 3800,
+    confirmed_instant_discount: 0,
+    confirmed_cashback: 0,
+    confirmed_redeemed_reward: 0,
+    pending_reward: 0,
+    estimated_reward: 0,
+    potential_savings: 0,
   };
 
-  const totalRealized = data?.total_realized_savings || 5525;
-  const totalSpend = data?.total_spend || 48500;
+  const totalRealized = data?.total_realized_savings || 0;
+  const totalSpend = data?.total_spend || 0;
 
   return (
     <div className="space-y-6 animate-fadeIn">

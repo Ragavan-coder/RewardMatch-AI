@@ -45,28 +45,6 @@ def aggregate_user_savings(txs) -> Dict[str, Any]:
 
     total_realized = confirmed_discounts + confirmed_cashback + confirmed_redeemed
 
-    if not txs.exists():
-        total_spend = Decimal("48500.00")
-        confirmed_discounts = Decimal("2450.00")
-        confirmed_cashback = Decimal("1875.00")
-        confirmed_redeemed = Decimal("1200.00")
-        pending_rewards = Decimal("650.00")
-        estimated_rewards = Decimal("1450.00")
-        potential_savings = Decimal("3800.00")
-        total_realized = confirmed_discounts + confirmed_cashback + confirmed_redeemed
-        category_spend = {
-            "Electronics": Decimal("18000.00"),
-            "Dining": Decimal("8500.00"),
-            "Shopping": Decimal("12000.00"),
-            "Travel": Decimal("10000.00"),
-        }
-        merchant_spend = {
-            "Amazon India": Decimal("14500.00"),
-            "Flipkart": Decimal("12000.00"),
-            "Swiggy": Decimal("8500.00"),
-            "MakeMyTrip": Decimal("10000.00"),
-        }
-
     return {
         "total_spend": float(total_spend),
         "total_realized_savings": float(total_realized),
@@ -89,28 +67,6 @@ class TransactionsListView(APIView):
     def get(self, request):
         user = get_authorized_user_or_raise(request)
         txs = TransactionRecord.objects.filter(user=user).order_by("-created_at")
-
-        if not txs.exists():
-            TransactionRecord.objects.create(
-                user=user,
-                merchant="Swiggy Instamart",
-                category="Dining",
-                amount=Decimal("3499.00"),
-                confirmed_cashback=Decimal("174.95"),
-                cashback_earned=Decimal("174.95"),
-                card_used="Tata Neu Infinity HDFC Bank",
-            )
-            TransactionRecord.objects.create(
-                user=user,
-                merchant="Amazon India",
-                category="Electronics",
-                amount=Decimal("14999.00"),
-                confirmed_instant_discount=Decimal("1500.00"),
-                confirmed_cashback=Decimal("749.95"),
-                cashback_earned=Decimal("749.95"),
-                card_used="HDFC Regalia Gold",
-            )
-            txs = TransactionRecord.objects.filter(user=user).order_by("-created_at")
 
         result = [
             {

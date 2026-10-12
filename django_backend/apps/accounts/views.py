@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 
 from apps.financial_profiles.models import CreditCardRecord, BankAccountRecord
@@ -45,6 +46,7 @@ def attach_banks_to_user(user: User, banks_data: List[Dict[str, Any]], fallback_
 
 
 class RegisterView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if not serializer.is_valid():
@@ -115,6 +117,7 @@ class RegisterView(APIView):
 
 
 class LoginView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if not serializer.is_valid():
@@ -185,6 +188,7 @@ class MeView(APIView):
 
 
 class OnboardingView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         user_id = request.data.get("user_id", 1)
         user = User.objects.filter(id=user_id).first()

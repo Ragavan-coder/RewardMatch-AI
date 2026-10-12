@@ -52,7 +52,6 @@ import {
   fetchUserBankAccounts,
   addUserBankAccount,
   type BankAccount,
-  type BankOnboardingItem,
 } from '../services/api';
 import type { CreditCard, TransactionActivity, Product } from '../types';
 

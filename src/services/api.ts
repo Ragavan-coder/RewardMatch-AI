@@ -891,19 +891,19 @@ export async function fetchSavingsSummary(userId: number = 1): Promise<SavingsSu
     return await res.json();
   } catch {
     return {
-      total_spend: 48500,
-      total_realized_savings: 5525,
+      total_spend: 0,
+      total_realized_savings: 0,
       buckets: {
-        confirmed_instant_discount: 2450,
-        confirmed_cashback: 1875,
-        confirmed_redeemed_reward: 1200,
-        pending_reward: 650,
-        estimated_reward: 1450,
-        potential_savings: 3800,
+        confirmed_instant_discount: 0,
+        confirmed_cashback: 0,
+        confirmed_redeemed_reward: 0,
+        pending_reward: 0,
+        estimated_reward: 0,
+        potential_savings: 0,
       },
-      category_spend: { Electronics: 18000, Dining: 8500, Shopping: 12000, Travel: 10000 },
-      merchant_spend: { 'Amazon India': 14500, Flipkart: 12000, Swiggy: 8500, MakeMyTrip: 10000 },
-      transaction_count: 8,
+      category_spend: {},
+      merchant_spend: {},
+      transaction_count: 0,
       formula_note: 'Total Realized Savings = Confirmed Instant Discounts + Confirmed Cashback + Confirmed Redeemed Rewards.',
     };
   }

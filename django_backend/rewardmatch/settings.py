@@ -18,10 +18,18 @@ else:
     load_dotenv(BASE_DIR.parent / ".env")
 
 # Security settings
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-rewardmatch-fintech-master-secret-key-2026")
-DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() in ("true", "1", "yes")
+is_dev = os.getenv("ENVIRONMENT", "development").lower() in ("development", "dev", "test") or "runserver" in sys.argv or "test" in sys.argv or "check" in sys.argv
+DEBUG = os.getenv("DJANGO_DEBUG", "True" if is_dev else "False").lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY") or os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    if is_dev or DEBUG:
+        import secrets
+        SECRET_KEY = secrets.token_urlsafe(50)
+    else:
+        raise ValueError("DJANGO_SECRET_KEY or SECRET_KEY environment variable is required in production.")
+
+ALLOWED_HOSTS = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost,testserver").split(",") if h.strip()]
 
 # Application definition
 INSTALLED_APPS = [
@@ -81,27 +89,54 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "rewardmatch.wsgi.application"
 
-# Database Configuration: MySQL 8.0 with PyMySQL
+# Database Configuration: MySQL 8.0 with graceful SQLite support for local dev/testing
+import urllib.parse
+
+DB_ENGINE = os.getenv("DB_ENGINE", "mysql").lower()
 DB_NAME = os.getenv("MYSQL_DATABASE", "rewardmatch")
 DB_USER = os.getenv("MYSQL_USER", "root")
-DB_PASSWORD = os.getenv("MYSQL_PASSWORD", "1234567890")
+DB_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
 DB_HOST = os.getenv("MYSQL_HOST", "127.0.0.1")
 DB_PORT = os.getenv("MYSQL_PORT", "3306")
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": DB_NAME,
-        "USER": DB_USER,
-        "PASSWORD": DB_PASSWORD,
-        "HOST": DB_HOST,
-        "PORT": DB_PORT,
-        "OPTIONS": {
-            "charset": "utf8mb4",
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+db_url = os.getenv("DATABASE_URL")
+if db_url and "mysql" in db_url:
+    cleaned_url = db_url.replace("mysql+pymysql://", "mysql://")
+    parsed = urllib.parse.urlparse(cleaned_url)
+    if parsed.username:
+        DB_USER = parsed.username
+    if parsed.password:
+        DB_PASSWORD = parsed.password
+    if parsed.hostname:
+        DB_HOST = parsed.hostname
+    if parsed.port:
+        DB_PORT = str(parsed.port)
+    db_path = parsed.path.lstrip("/").split("?")[0]
+    if db_path:
+        DB_NAME = db_path
+
+if DB_ENGINE == "sqlite" or (not DB_PASSWORD and not db_url):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "rewardmatch_local.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": DB_NAME,
+            "USER": DB_USER,
+            "PASSWORD": DB_PASSWORD,
+            "HOST": DB_HOST,
+            "PORT": DB_PORT,
+            "OPTIONS": {
+                "charset": "utf8mb4",
+                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
+    }
 
 # Password validation with Argon2id support
 PASSWORD_HASHERS = [
@@ -130,14 +165,22 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# CORS configuration
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS configuration - Restricted by default
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ALLOWED_ORIGINS",
+        "http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:8000,http://localhost:8000",
+    ).split(",")
+    if origin.strip()
+]
 CORS_ALLOW_CREDENTIALS = True
 
-# Django REST Framework
+# Django REST Framework - Authentication required by default
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
+        "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "apps.accounts.authentication.BearerSessionAuthentication",

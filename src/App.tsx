@@ -30,6 +30,7 @@ export const App: React.FC = () => {
   };
 
   const handleDemoAccess = () => {
+    localStorage.setItem('rewardmatch_token', 'demo_session_token_rewardmatch');
     setCurrentUser({
       name: 'Ragavan (Demo)',
       email: 'ragavan@example.com',
@@ -40,6 +41,7 @@ export const App: React.FC = () => {
   };
 
   const handleSignOut = () => {
+    localStorage.removeItem('rewardmatch_token');
     setCurrentUser(null);
     setCurrentView('login');
   };
